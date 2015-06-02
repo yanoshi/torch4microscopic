@@ -145,7 +145,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="image_io.cpp" />
+    <ClCompile Include="mat_converter.cpp" />
     <ClCompile Include="torch4microscopic.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="image_io.h" />
+    <ClInclude Include="mat_converter.h" />
+    <ClInclude Include="parameters.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

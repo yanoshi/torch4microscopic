@@ -39,9 +39,15 @@ int main(int argc, char* argv[])
 		options_description option_marged("");
 		option_marged.add(inout_options).add(calc_options);
 
-		if (!cmd_values.count("input") || cmd_values.count("output"))
+
+		store(parse_command_line(argc, argv, option_marged), cmd_values);
+		notify(cmd_values);
+
+
+		if (!(cmd_values.count("input") && cmd_values.count("output")))
 		{
 			cout << option_marged << endl;
+			exit(0);
 		}
 		else
 		{
@@ -56,8 +62,6 @@ int main(int argc, char* argv[])
 
 		is_cutback = cmd_values.count("cutback");
 
-		store(parse_command_line(argc, argv, option_marged), cmd_values);
-		notify(cmd_values);
 
 		
 	}
