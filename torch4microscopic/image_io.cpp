@@ -1,6 +1,9 @@
 #include "image_io.h"
 
 #include <boost/filesystem.hpp>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
 
 using namespace std;
 using namespace cv;
@@ -51,4 +54,29 @@ Mat ImageIO::get_mat_from_file(string filename)
 	//*/
 
 	return img_real;
+}
+
+
+void ImageIO::save_mats(std::shared_ptr<vector<Mat>> mats_obj, string filepath)
+{
+	namespace fs = boost::filesystem;
+
+	fs::path dir(filepath);
+
+	//ファイルパスが存在してなかったらディレクトリを作成する
+	if (!fs::exists(dir))
+		fs::create_directories(dir);
+
+	for (int i = 0; i < mats_obj->size(); i++)
+	{
+		ostringstream sout;
+		sout << setfill('0') << setw(5) << i;
+		save_mat(mats_obj->at(i), (dir / fs::path(sout.str() + ".tif")).string());
+	}
+}
+
+
+void ImageIO::save_mat(Mat mat_obj, string filename)
+{
+	imwrite(filename, mat_obj);
 }

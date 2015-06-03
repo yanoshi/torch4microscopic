@@ -88,6 +88,8 @@ int main(int argc, char* argv[])
 		exit(0);
 	}
 
+	ImageIO::save_mats(input_mats, output_src);
+
 	getchar();
 	return 0;
 }
