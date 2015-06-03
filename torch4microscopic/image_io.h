@@ -18,7 +18,7 @@ public:
 	static std::shared_ptr<std::vector<cv::Mat>> get_mats(std::string filename);
 
 	//Matをファイルにセーブ
-	static void  save_mats(std::shared_ptr<cv::Mat> mats_obj, std::string filepath);
+	static void save_mats(std::shared_ptr<std::vector<cv::Mat>> mats_obj, std::string filepath);
 
 private:
 	//画像ファイルよりMatを作成
