@@ -8,8 +8,10 @@
 #include <boost/program_options.hpp>
 
 #include "parameters.h"
+#include "image_io.h"
 
 using namespace std;
+using namespace cv;
 using namespace boost::program_options;
 
 int main(int argc, char* argv[])
@@ -70,8 +72,23 @@ int main(int argc, char* argv[])
 		cout << e.what() << endl;
 		exit(0);
 	}
+	
 
+	//ƒtƒ@ƒCƒ‹“Ç‚Ýž‚Ý
+	std::shared_ptr<vector<Mat>> input_mats;
+	
+	try
+	{
+		input_mats = ImageIO::get_mats(input_src);
+	}
+	catch (exception &e)
+	{
+		cout << e.what() << endl;
 
+		exit(0);
+	}
+
+	getchar();
 	return 0;
 }
 
