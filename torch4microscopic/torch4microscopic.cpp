@@ -29,7 +29,6 @@ int main(int argc, char* argv[])
 
 	calc_options.add_options()
 		("amp_mode", value<string>(), "enable amplifier (exponential growth mode[exp] OR adjust highest pixel mode[simple])")
-		("amp_exp_power", value<double>(), "amp power")
 		("cutback", "enable subtraction for cutback (average lowest pixel)")
 		("unitsize_depth,d", value<double>() ,"depth of z order");
 
