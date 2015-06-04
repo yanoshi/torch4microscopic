@@ -3,11 +3,10 @@
 using namespace cv;
 using namespace std;
 
-MatConverter::MatConverter(std::shared_ptr<std::vector<cv::Mat>> input, parameters::NormalizeMode normalize_mode, bool cutback)
+MatConverter::MatConverter(std::shared_ptr<std::vector<cv::Mat>> input, parameters::Values values)
 {
 	this->input_obj = input;
-	this->is_cutback = cutback;
-	this->normalize_mode = normalize_mode;
+	this->param_values = values;
 }
 
 std::shared_ptr<std::vector<cv::Mat>> MatConverter::get_result()
@@ -19,7 +18,7 @@ std::shared_ptr<std::vector<cv::Mat>> MatConverter::get_result()
 
 	double val_max = 0;
 
-	if (this->is_cutback)
+	if (this->param_values.enable_cutback)
 	{
 		for (int i = 0; i < this->input_obj->size(); i++)
 		{
@@ -50,7 +49,7 @@ std::shared_ptr<std::vector<cv::Mat>> MatConverter::get_result()
 
 
 		//足切り処理
-		if (this->is_cutback)
+		if (this->param_values.enable_cutback)
 		{
 			mat_obj = this->input_obj->at(i) - val_min_highest;
 		}
@@ -62,7 +61,7 @@ std::shared_ptr<std::vector<cv::Mat>> MatConverter::get_result()
 
 
 		//平均化処理
-		switch (this->normalize_mode)
+		switch (this->param_values.normalize_mode)
 		{
 		case parameters::NormalizeMode::None:
 			//何もしない時の処理
@@ -77,10 +76,17 @@ std::shared_ptr<std::vector<cv::Mat>> MatConverter::get_result()
 		case parameters::NormalizeMode::ExpDamping:
 			//指数関数的に減衰する
 			//今のところ、200umで1/10と考えて計算
-			double depth = i * parameters::Values::unitsize_depth;
+			double depth = i * param_values.unitsize_depth;
 			mat_obj = mat_obj * (1 / pow(10.0, depth / 200.0));
 
 			break;
+		}
+
+
+		//ガウシアンフィルタ
+		if (this->param_values.enable_gblur)
+		{
+			GaussianBlur(mat_obj, mat_obj, this->param_values.window_size, 0);
 		}
 
 		return_obj->push_back(mat_obj);

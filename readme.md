@@ -28,6 +28,12 @@
 画像1枚ごとに観測点が何um変化するかを指定する。
 --amp_modeがexpの際に必須。
 
+### --gaussian,-g
+ガウシアンフィルタを掛ける。
+
+### --window_size [int],-w [int]
+ガウシアンフィルタ等のWindow Sizeを指定する
+
 ## その他
 `convert_using_expmode.bat` か `convert_using_simplemode.bat` にフォルダを投げ込めば楽できます。
 

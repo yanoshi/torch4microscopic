@@ -17,12 +17,11 @@ class MatConverter
 {
 private:
 	std::shared_ptr<std::vector<cv::Mat>> input_obj;
-	parameters::NormalizeMode normalize_mode;
-	bool is_cutback;
+	parameters::Values param_values;
 
 
 public:
-	MatConverter(std::shared_ptr<std::vector<cv::Mat>> input, parameters::NormalizeMode normalize_mode, bool cutback);
+	MatConverter(std::shared_ptr<std::vector<cv::Mat>> input, parameters::Values values);
 
 	std::shared_ptr<std::vector<cv::Mat>> get_result();
 };

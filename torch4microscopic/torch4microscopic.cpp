@@ -15,7 +15,6 @@ using namespace std;
 using namespace cv;
 using namespace boost::program_options;
 
-double parameters::Values::unitsize_depth = 0.0;
 
 int main(int argc, char* argv[])
 {
@@ -30,14 +29,15 @@ int main(int argc, char* argv[])
 	calc_options.add_options()
 		("amp_mode", value<string>(), "enable amplifier (exponential growth mode[exp] OR adjust highest pixel mode[simple])")
 		("cutback", "enable subtraction for cutback (average lowest pixel)")
-		("unitsize_depth,d", value<double>() ,"depth of z order");
+		("unitsize_depth,d", value<double>() ,"depth of z order")
+		("gaussian,g","enable gaussian blur")
+		("window_size,w",value<int>(),"filter's window size");
 
 	variables_map cmd_values;
 
 	//各パラメータ情報を格納する変数
-	parameters::NormalizeMode normalize_mode;
-	bool is_cutback;
 	string input_src, output_src;
+	parameters::Values param;
 
 
 	try 
@@ -66,11 +66,11 @@ int main(int argc, char* argv[])
 		{
 			if (cmd_values["amp_mode"].as<string>() == "exp")
 			{
-				normalize_mode = parameters::NormalizeMode::ExpDamping;
+				param.normalize_mode = parameters::NormalizeMode::ExpDamping;
 
 				if (cmd_values.count("unitsize_depth"))
 				{
-					parameters::Values::unitsize_depth = cmd_values["unitsize_depth"].as<double>();
+					param.unitsize_depth = cmd_values["unitsize_depth"].as<double>();
 				}
 				else
 				{
@@ -80,18 +80,23 @@ int main(int argc, char* argv[])
 			}
 			else if (cmd_values["amp_mode"].as<string>() == "simple")
 			{
-				normalize_mode = parameters::NormalizeMode::Simple;
+				param.normalize_mode = parameters::NormalizeMode::Simple;
 			}
 			else
-				normalize_mode = parameters::NormalizeMode::None;
+				param.normalize_mode = parameters::NormalizeMode::None;
 
 		}
 		else
-			normalize_mode = parameters::NormalizeMode::None;
+			param.normalize_mode = parameters::NormalizeMode::None;
 
-		is_cutback = cmd_values.count("cutback");
+		param.enable_cutback = cmd_values.count("cutback");
 
-
+		if (cmd_values.count("gaussian"))
+		{
+			param.enable_gblur = true;
+			if (cmd_values.count("window_size"))
+				param.window_size = Size(cmd_values["window_size"].as<int>(), cmd_values["window_size"].as<int>());
+		}
 		
 	}
 	catch (exception &e)
@@ -118,7 +123,7 @@ int main(int argc, char* argv[])
 	
 	//変換処理
 	std::shared_ptr<vector<Mat>> output_mats;
-	MatConverter converter(input_mats, normalize_mode, is_cutback);
+	MatConverter converter(input_mats, param);
 
 	output_mats = converter.get_result();
 

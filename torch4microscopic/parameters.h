@@ -1,5 +1,12 @@
 #pragma once
 
+//OpenCV用インクルード文
+//インクルードファイル指定
+#include <opencv2/opencv.hpp>
+//静的リンクライブラリの指定
+#include <opencv2/opencv_lib.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 namespace parameters
 {
@@ -35,7 +42,20 @@ namespace parameters
 	class Values
 	{
 	public:
-		static double unitsize_depth;
+		double unitsize_depth;
+		bool enable_cutback;
+		cv::Size window_size;
+		bool enable_gblur;
+		NormalizeMode normalize_mode;
+
+		Values()
+		{
+			unitsize_depth = 0.0;
+			enable_cutback = false;
+			enable_gblur = false;
+			window_size = cv::Size(5, 5);
+			normalize_mode = NormalizeMode::None;
+		}
 	};
 
 	
