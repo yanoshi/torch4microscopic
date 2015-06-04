@@ -41,7 +41,7 @@ std::shared_ptr<std::vector<cv::Mat>> MatConverter::get_result()
 	}
 
 
-	for (int i = 0; this->input_obj->size(); i++)
+	for (int i = 0; i < this->input_obj->size(); i++)
 	{
 		Mat mat_obj;
 
@@ -53,6 +53,9 @@ std::shared_ptr<std::vector<cv::Mat>> MatConverter::get_result()
 		if (this->is_cutback)
 		{
 			mat_obj = this->input_obj->at(i) - val_min_highest;
+		}
+		else{
+			mat_obj = Mat(this->input_obj->at(i));
 		}
 
 
@@ -67,7 +70,7 @@ std::shared_ptr<std::vector<cv::Mat>> MatConverter::get_result()
 			
 		case parameters::NormalizeMode::Simple:
 			//Še‰æ‘œ‚ÌÅ‘å’l‚ÆÅ¬’l‚Å‘«Ø‚è
-			mat_obj = this->input_obj->at(i) * (65536.0 / (val_max - val_min_highest));
+			mat_obj = mat_obj * (65536.0 / (val_max - val_min_highest));
 			break;
 			
 
