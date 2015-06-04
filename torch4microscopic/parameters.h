@@ -1,3 +1,5 @@
+#pragma once
+
 
 namespace parameters
 {
@@ -28,4 +30,13 @@ namespace parameters
 		CutLowerByPersent
 	};
 	*/
+
+
+	class Values
+	{
+	public:
+		static double unitsize_depth;
+	};
+
+	
 }

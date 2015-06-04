@@ -9,10 +9,13 @@
 
 #include "parameters.h"
 #include "image_io.h"
+#include "mat_converter.h"
 
 using namespace std;
 using namespace cv;
 using namespace boost::program_options;
+
+double parameters::Values::unitsize_depth = 0.0;
 
 int main(int argc, char* argv[])
 {
@@ -25,8 +28,10 @@ int main(int argc, char* argv[])
 		("output,o", value<string>(), "output path");
 
 	calc_options.add_options()
-		("amp_exp", "enable amplifier (exponential growth method)")
-		("cutback", "enable subtraction for cutback (average lowest pixel)");
+		("amp_mode", value<string>(), "enable amplifier (exponential growth mode[exp] OR adjust highest pixel mode[simple])")
+		("amp_exp_power", value<double>(), "amp power")
+		("cutback", "enable subtraction for cutback (average lowest pixel)")
+		("unitsize_depth,d", value<double>() ,"depth of z order");
 
 	variables_map cmd_values;
 
@@ -57,8 +62,31 @@ int main(int argc, char* argv[])
 			output_src = cmd_values["output"].as<string>();
 		}
 
-		if (cmd_values.count("amp_exp"))
-			normalize_mode = parameters::NormalizeMode::ExpDamping;
+
+		if (cmd_values.count("amp_mode"))
+		{
+			if (cmd_values["amp_mode"].as<string>() == "exp")
+			{
+				normalize_mode = parameters::NormalizeMode::ExpDamping;
+
+				if (cmd_values.count("unitsize_depth"))
+				{
+					parameters::Values::unitsize_depth = cmd_values["unitsize_depth"].as<double>();
+				}
+				else
+				{
+					cout << calc_options << endl;
+					exit(0);
+				}
+			}
+			else if (cmd_values["amp_mode"].as<string>() == "simple")
+			{
+				normalize_mode = parameters::NormalizeMode::Simple;
+			}
+			else
+				normalize_mode = parameters::NormalizeMode::None;
+
+		}
 		else
 			normalize_mode = parameters::NormalizeMode::None;
 
@@ -88,9 +116,19 @@ int main(int argc, char* argv[])
 		exit(0);
 	}
 
-	ImageIO::save_mats(input_mats, output_src);
+	
+	//ïœä∑èàóù
+	std::shared_ptr<vector<Mat>> output_mats;
+	MatConverter converter(input_mats, normalize_mode, is_cutback);
 
+	output_mats = converter.get_result();
+
+
+	ImageIO::save_mats(output_mats, output_src);
+#ifdef _DEBUG
+	cout << "Please press enter key..." << endl;
 	getchar();
+#endif
 	return 0;
 }
 
